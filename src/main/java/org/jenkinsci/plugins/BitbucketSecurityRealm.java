@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jenkins.security.SecurityListener;
 import org.acegisecurity.Authentication;
 import org.acegisecurity.AuthenticationException;
 import org.acegisecurity.AuthenticationManager;
@@ -40,7 +39,9 @@ import hudson.model.User;
 import hudson.security.GroupDetails;
 import hudson.security.SecurityRealm;
 import hudson.security.UserMayOrMayNotExistException;
+import hudson.util.Secret;
 import jenkins.model.Jenkins;
+import jenkins.security.SecurityListener;
 
 public class BitbucketSecurityRealm extends SecurityRealm {
 
@@ -48,13 +49,16 @@ public class BitbucketSecurityRealm extends SecurityRealm {
     private static final Logger LOGGER = Logger.getLogger(BitbucketSecurityRealm.class.getName());
 
     private String clientID;
+    @Deprecated
     private String clientSecret;
+    private Secret secretClientSecret;
 
     @DataBoundConstructor
-    public BitbucketSecurityRealm(String clientID, String clientSecret) {
+    public BitbucketSecurityRealm(String clientID, String clientSecret, Secret secretClientSecret) {
         super();
         this.clientID = Util.fixEmptyAndTrim(clientID);
         this.clientSecret = Util.fixEmptyAndTrim(clientSecret);
+        this.secretClientSecret = secretClientSecret;
     }
 
     public BitbucketSecurityRealm() {
@@ -70,8 +74,7 @@ public class BitbucketSecurityRealm extends SecurityRealm {
     }
 
     /**
-     * @param clientID
-     *            the clientID to set
+     * @param clientID the clientID to set
      */
     public void setClientID(String clientID) {
         this.clientID = clientID;
@@ -80,16 +83,35 @@ public class BitbucketSecurityRealm extends SecurityRealm {
     /**
      * @return the clientSecret
      */
+    @Deprecated
     public String getClientSecret() {
         return clientSecret;
     }
 
     /**
-     * @param clientSecret
-     *            the clientSecret to set
+     * @param clientSecret the clientSecret to set
      */
+    @Deprecated
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
+    }
+
+    /**
+     * @return the secretClientSecret
+     */
+    public Secret getSecretClientSecret() {
+        // for backward compatibility
+        if (StringUtils.isNotEmpty(clientSecret)) {
+            return Secret.fromString(clientSecret);
+        }
+        return secretClientSecret;
+    }
+
+    /**
+     * @param secretClientSecret the secretClientSecret to set
+     */
+    public void setSecretClientSecret(Secret secretClientSecret) {
+        this.secretClientSecret = secretClientSecret;
     }
 
     public HttpResponse doCommenceLogin(StaplerRequest request, @Header("Referer") final String referer)
@@ -107,7 +129,7 @@ public class BitbucketSecurityRealm extends SecurityRealm {
         }
         String callback = rootUrl + "/securityRealm/finishLogin";
 
-        BitbucketApiService bitbucketApiService = new BitbucketApiService(clientID, clientSecret, callback);
+        BitbucketApiService bitbucketApiService = new BitbucketApiService(clientID, getSecretClientSecret().getPlainText(), callback);
 
         return new HttpRedirect(bitbucketApiService.createAuthorizationCodeURL(null));
     }
@@ -120,11 +142,13 @@ public class BitbucketSecurityRealm extends SecurityRealm {
             return HttpResponses.redirectToContextRoot();
         }
 
-        Token accessToken = new BitbucketApiService(clientID, clientSecret).getTokenByAuthorizationCode(code, null);
+        String rawClientSecret = getSecretClientSecret().getPlainText();
+
+        Token accessToken = new BitbucketApiService(clientID, rawClientSecret).getTokenByAuthorizationCode(code, null);
 
         if (!accessToken.isEmpty()) {
 
-            BitbucketAuthenticationToken auth = new BitbucketAuthenticationToken(accessToken, clientID, clientSecret);
+            BitbucketAuthenticationToken auth = new BitbucketAuthenticationToken(accessToken, clientID, rawClientSecret);
             SecurityContextHolder.getContext().setAuthentication(auth);
 
             User u = User.current();
@@ -177,7 +201,7 @@ public class BitbucketSecurityRealm extends SecurityRealm {
         if (!(token instanceof BitbucketAuthenticationToken)) {
             throw new UserMayOrMayNotExistException("Unexpected authentication type: " + token);
         }
-        result = new BitbucketApiService(clientID, clientSecret).getUserByUsername(username);
+        result = new BitbucketApiService(clientID, getSecretClientSecret().getPlainText()).getUserByUsername(username);
         if (result == null) {
             throw new UsernameNotFoundException("User does not exist for login: " + username);
         }
@@ -217,8 +241,8 @@ public class BitbucketSecurityRealm extends SecurityRealm {
             writer.setValue(realm.getClientID());
             writer.endNode();
 
-            writer.startNode("clientSecret");
-            writer.setValue(realm.getClientSecret());
+            writer.startNode("secretClientSecret");
+            writer.setValue(realm.getSecretClientSecret().getEncryptedValue());
             writer.endNode();
         }
 
@@ -268,6 +292,8 @@ public class BitbucketSecurityRealm extends SecurityRealm {
                 realm.setClientID(value);
             } else if (node.equalsIgnoreCase("clientsecret")) {
                 realm.setClientSecret(value);
+            } else if (node.equalsIgnoreCase("secretclientsecret")) {
+                realm.setSecretClientSecret(Secret.fromString(value));
             } else {
                 throw new ConversionException("invalid node value = " + node);
             }
