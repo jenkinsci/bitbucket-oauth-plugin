@@ -52,6 +52,7 @@ public class BitbucketSecurityRealm extends SecurityRealm {
     @Deprecated
     private String clientSecret;
     private Secret secretClientSecret;
+    private String[] roles = {"admin", "contributor", "member"};
 
     @DataBoundConstructor
     public BitbucketSecurityRealm(String clientID, String clientSecret, Secret secretClientSecret) {
@@ -114,6 +115,18 @@ public class BitbucketSecurityRealm extends SecurityRealm {
         this.secretClientSecret = secretClientSecret;
     }
 
+    public String[] getRoles() {
+        return this.roles;
+    }
+
+    public void setRoles(String roles) {
+        if (roles == null || roles.trim().equals("")) {
+            return;
+        }
+
+        this.roles = roles.split(",");
+    }
+
     public HttpResponse doCommenceLogin(StaplerRequest request, @Header("Referer") final String referer)
             throws IOException {
 
@@ -129,7 +142,7 @@ public class BitbucketSecurityRealm extends SecurityRealm {
         }
         String callback = rootUrl + "/securityRealm/finishLogin";
 
-        BitbucketApiService bitbucketApiService = new BitbucketApiService(clientID, getSecretClientSecret().getPlainText(), callback);
+        BitbucketApiService bitbucketApiService = new BitbucketApiService(clientID, getSecretClientSecret().getPlainText(), callback, getRoles());
 
         return new HttpRedirect(bitbucketApiService.createAuthorizationCodeURL(null));
     }
@@ -294,6 +307,8 @@ public class BitbucketSecurityRealm extends SecurityRealm {
                 realm.setClientSecret(value);
             } else if (node.equalsIgnoreCase("secretclientsecret")) {
                 realm.setSecretClientSecret(Secret.fromString(value));
+            } else if (node.equalsIgnoreCase("roles")) {
+                realm.setRoles(value);
             } else {
                 throw new ConversionException("invalid node value = " + node);
             }

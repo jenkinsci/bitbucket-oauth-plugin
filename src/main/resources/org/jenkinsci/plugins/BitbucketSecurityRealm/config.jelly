@@ -8,5 +8,9 @@
         <f:entry title="Client Secret" field="secretClientSecret" help="/plugin/bitbucket-oauth/help/realm/client-secret-help.html">
             <f:password />
         </f:entry>
+
+        <f:entry title="Roles" field="roles" help="">
+            <f:textbox />
+        </f:entry>
     </f:section>
 </j:jelly>
