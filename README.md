@@ -59,6 +59,7 @@ import hudson.security.AuthorizationStrategy
 import hudson.security.SecurityRealm
 import jenkins.model.Jenkins
 import org.jenkinsci.plugins.BitbucketSecurityRealm
+import hudson.util.Secret
 
 // parameters
 def bitbucketSecurityRealmParameters = [
@@ -69,7 +70,8 @@ def bitbucketSecurityRealmParameters = [
 // security realm configuration
 SecurityRealm bitbucketSecurityRealm = new BitbucketSecurityRealm(
   bitbucketSecurityRealmParameters.clientID,
-  bitbucketSecurityRealmParameters.clientSecret
+  "",
+  Secret.fromString(bitbucketSecurityRealmParameters.clientSecret)
 )
 
 // authorization strategy - full control when logged in
