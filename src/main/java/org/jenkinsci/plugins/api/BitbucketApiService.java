@@ -29,17 +29,25 @@ public class BitbucketApiService {
 
     private OAuthService service;
 
+    private String[] roles;
+
     public BitbucketApiService(String apiKey, String apiSecret) {
         this(apiKey, apiSecret, null);
     }
 
     public BitbucketApiService(String apiKey, String apiSecret, String callback) {
+        this(apiKey, apiSecret, callback,null);
+    }
+
+    public BitbucketApiService(String apiKey, String apiSecret, String callback, String[] roles) {
         super();
         ServiceBuilder builder = new ServiceBuilder().provider(BitbucketApiV2.class).apiKey(apiKey).apiSecret(apiSecret);
         if (StringUtils.isNotBlank(callback)) {
             builder.callback(callback);
         }
         service = builder.build();
+
+        this.roles = roles;
     }
 
     public Token createRquestToken() {
@@ -60,9 +68,10 @@ public class BitbucketApiService {
 
         bitbucketUser.addAuthority("authenticated");
 
-        findAndAddUserTeamAccess(accessToken, bitbucketUser, "admin");
-        findAndAddUserTeamAccess(accessToken, bitbucketUser, "contributor");
-        findAndAddUserTeamAccess(accessToken, bitbucketUser, "member");
+        for (String role: this.roles)
+        {
+            findAndAddUserTeamAccess(accessToken, bitbucketUser, role.trim());
+        }
 
         return bitbucketUser;
     }
