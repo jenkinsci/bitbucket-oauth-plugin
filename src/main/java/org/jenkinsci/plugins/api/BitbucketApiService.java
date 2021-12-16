@@ -83,7 +83,6 @@ public class BitbucketApiService {
         service.signRequest(accessToken, request);
         Response response = request.send();
         String json = response.getBody();
-        LOGGER.log(Level.INFO, response.getBody());
         Gson gson = new Gson();
         BitbucketUser bitbucketUser = gson.fromJson(json, BitbucketUser.class);
         if (bitbucketUser == null || StringUtils.isEmpty(bitbucketUser.username)) {
