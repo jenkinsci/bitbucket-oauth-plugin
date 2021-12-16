@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.acegisecurity.userdetails.UserDetails;
@@ -82,6 +83,7 @@ public class BitbucketApiService {
         service.signRequest(accessToken, request);
         Response response = request.send();
         String json = response.getBody();
+        LOGGER.log(Level.INFO, response.getBody());
         Gson gson = new Gson();
         BitbucketUser bitbucketUser = gson.fromJson(json, BitbucketUser.class);
         if (bitbucketUser == null || StringUtils.isEmpty(bitbucketUser.username)) {
@@ -93,7 +95,7 @@ public class BitbucketApiService {
     private void findAndAddUserTeamAccess(Token accessToken, BitbucketUser bitbucketUser, String role) {
         // require "Team membership Read" permission
         Gson gson = new Gson();
-        String url = API2_ENDPOINT + "teams/?role=" + role;
+        String url = API2_ENDPOINT + "workspaces/?role=" + role;
         try {
             do {
                 OAuthRequest request1 = new OAuthRequest(Verb.GET, url);
@@ -124,7 +126,7 @@ public class BitbucketApiService {
         InputStreamReader reader = null;
         UserDetails userResponce = null;
         try {
-            URL url = new URL(API2_ENDPOINT + "users/" + username);
+            URL url = new URL(API2_ENDPOINT + "workspaces/" + username);
             reader = new InputStreamReader(url.openStream(), "UTF-8");
             Gson gson = new Gson();
             userResponce = gson.fromJson(reader, BitbucketUser.class);
