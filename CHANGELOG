@@ -1,0 +1,42 @@
+# Version History
+
+### Version 0.11 (19 Dec, 2021)
+
+* Fixed using of deprecated `teams` API. (related: [Pull Request #8](https://github.com/jenkinsci/bitbucket-oauth-plugin/pull/8))
+
+### Version 0.10 (14 Oct, 2019)
+
+* [SECURITY-1546] Fixed client secret is saved in plain text (Notice: I recommend that you re-save Jenkins security configuration.)
+
+### Version 0.9 (19 Jan, 2019)
+
+* Fixed infinite redirect loop on Jenkins 2.150.2 (related:  [JENKINS-55668](https://issues.jenkins-ci.org/browse/JENKINS-55668) )
+
+### Version 0.8 (3 Jan, 2019)
+
+* Changed Bitbucket OAuth 1.0 to OAuth 2.0 (Notice: **You have to specify the Callback URL in Bitbucket OAuth setting page**)
+* Changed Bitbucket API v1 to v2 (Notice: **You have to add Account Read permission in Bitbucket OAuth setting page**)
+* Changed secret key input field to password
+
+### Version 0.7 (1 May, 2018)
+
+* Fixed Groovy example did not work
+Version 0.6 (25 Feb, 2018)
+* Added Bitbucket API 2.0 support (Pluign requires Account Read Permission only)
+* Added spport for adding user authorities based on bitbucket team/role (related: [Pull Request #11](https://github.com/mallowlabs/bitbucket-oauth-plugin/pull/11))
+
+### Version 0.5 (5 Jun, 2016)
+
+* Fixed ClassCastException (related: [JENKINS-34792](https://issues.jenkins-ci.org/browse/JENKINS-34792) )
+
+### Version 0.4 (14 May, 2014)
+
+* Fixed broken api token access (related: [JENKINS-21882](https://issues.jenkins-ci.org/browse/JENKINS-21882) )
+
+### Version 0.3 (31 Jul, 2013)
+
+* Works on reverse proxy environments ( Use Jenkins URL configuration instead of request URL )
+
+### Version 0.1 (29 May, 2013)
+
+* Initial release
