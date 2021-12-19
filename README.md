@@ -57,7 +57,7 @@ These group names can be used in Jenkins *Matrix-based security* to give fine gr
 
 Via Groovy script
 -----------------------------------
-```
+```groovy
 import hudson.security.AuthorizationStrategy
 import hudson.security.SecurityRealm
 import jenkins.model.Jenkins
