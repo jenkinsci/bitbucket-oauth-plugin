@@ -4,13 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 public class BitbucketTeams
 {
-    @SerializedName("username")
+    @SerializedName("slug")
     String username;
 
     @SerializedName("type")
     String type;
 
-    @SerializedName("display_name")
+    @SerializedName("name")
     String displayName;
 
     public String getUsername()

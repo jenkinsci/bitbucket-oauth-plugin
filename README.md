@@ -45,8 +45,8 @@ Supported roles are `admin`, `contributor` and `member`
 
 Examples
 ```
-team1::admin
-team2::contributor
+team1::owner
+team2::collaborator
 team3::member
 ```
 

@@ -60,8 +60,8 @@ public class BitbucketApiService {
 
         bitbucketUser.addAuthority("authenticated");
 
-        findAndAddUserTeamAccess(accessToken, bitbucketUser, "admin");
-        findAndAddUserTeamAccess(accessToken, bitbucketUser, "contributor");
+        findAndAddUserTeamAccess(accessToken, bitbucketUser, "owner");
+        findAndAddUserTeamAccess(accessToken, bitbucketUser, "collaborator");
         findAndAddUserTeamAccess(accessToken, bitbucketUser, "member");
 
         return bitbucketUser;
@@ -93,7 +93,7 @@ public class BitbucketApiService {
     private void findAndAddUserTeamAccess(Token accessToken, BitbucketUser bitbucketUser, String role) {
         // require "Team membership Read" permission
         Gson gson = new Gson();
-        String url = API2_ENDPOINT + "teams/?role=" + role;
+        String url = API2_ENDPOINT + "workspaces/?role=" + role;
         try {
             do {
                 OAuthRequest request1 = new OAuthRequest(Verb.GET, url);
