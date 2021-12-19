@@ -1,5 +1,9 @@
 # Version History
 
+### Version 0.12 (19 Dec, 2021)
+
+* Changed README for [the Jenkins documentation system](https://www.jenkins.io/doc/developer/publishing/documentation/)
+
 ### Version 0.11 (19 Dec, 2021)
 
 * Fixed using of deprecated `teams` API. (related: [Pull Request #8](https://github.com/jenkinsci/bitbucket-oauth-plugin/pull/8))
