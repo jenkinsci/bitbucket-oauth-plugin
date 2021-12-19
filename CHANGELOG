@@ -18,6 +18,19 @@
 * Changed Bitbucket API v1 to v2 (Notice: **You have to add Account Read permission in Bitbucket OAuth setting page**)
 * Changed secret key input field to password
 
+bitbucket-oauth-plugin changed using OAuth version 1.0 to 2.0.
+
+If you got **invalid redirect_uri** error in login, you hove to specify Callback URL in Bitbucket OAuth setting page.
+
+![](images/invalid_redirect_uri.png)
+![](images/callback_url.png)
+
+bitbucket-oauth-plugin changed using Bitbucket API endpoint v1 to v2.
+
+You have to change permissions: **Account > Read and Team membership > Read**
+
+![](images/permissions.png)
+
 ### Version 0.7 (1 May, 2018)
 
 * Fixed Groovy example did not work
