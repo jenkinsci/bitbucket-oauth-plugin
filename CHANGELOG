@@ -4,6 +4,13 @@
 
 * Fixed using of deprecated `teams` API. (related: [Pull Request #8](https://github.com/jenkinsci/bitbucket-oauth-plugin/pull/8))
 
+If you update 0.10 to 0.11, change role names.
+
+* `admin` to `owner`
+* `contributor` to `collaborator`
+
+For example if your role name is `team1::admin`, change the role name to `team1::owner`.
+
 ### Version 0.10 (14 Oct, 2019)
 
 * [SECURITY-1546] Fixed client secret is saved in plain text (Notice: I recommend that you re-save Jenkins security configuration.)
