@@ -12,6 +12,7 @@ import org.acegisecurity.context.SecurityContextHolder;
 import org.acegisecurity.userdetails.UserDetails;
 import org.acegisecurity.userdetails.UserDetailsService;
 import org.acegisecurity.userdetails.UsernameNotFoundException;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.api.BitbucketApiService;
 import org.jenkinsci.plugins.api.BitbucketGroup;
@@ -45,6 +46,7 @@ import jenkins.security.SecurityListener;
 
 public class BitbucketSecurityRealm extends SecurityRealm {
 
+    private static final String STATE_ATTRIBUTE = BitbucketSecurityRealm.class.getName() + ".state";
     private static final String REFERER_ATTRIBUTE = BitbucketSecurityRealm.class.getName() + ".referer";
     private static final Logger LOGGER = Logger.getLogger(BitbucketSecurityRealm.class.getName());
 
@@ -117,6 +119,8 @@ public class BitbucketSecurityRealm extends SecurityRealm {
     public HttpResponse doCommenceLogin(StaplerRequest request, @Header("Referer") final String referer)
             throws IOException {
 
+        String state = RandomStringUtils.random(64, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~");
+        request.getSession().setAttribute(STATE_ATTRIBUTE, state);
         request.getSession().setAttribute(REFERER_ATTRIBUTE, referer);
 
         Jenkins jenkins = Jenkins.getInstance();
@@ -131,14 +135,20 @@ public class BitbucketSecurityRealm extends SecurityRealm {
 
         BitbucketApiService bitbucketApiService = new BitbucketApiService(clientID, getSecretClientSecret().getPlainText(), callback);
 
-        return new HttpRedirect(bitbucketApiService.createAuthorizationCodeURL(null));
+        return new HttpRedirect(bitbucketApiService.createAuthorizationCodeURL(null, state));
     }
 
     public HttpResponse doFinishLogin(StaplerRequest request) throws IOException {
         String code = request.getParameter("code");
+        String state = request.getParameter("state");
 
         if (StringUtils.isBlank(code)) {
             LOGGER.log(Level.SEVERE, "doFinishLogin() code = null");
+            return HttpResponses.redirectToContextRoot();
+        }
+
+        if (state == null || !StringUtils.equals(state, (String) request.getSession().getAttribute(STATE_ATTRIBUTE))) {
+            LOGGER.log(Level.SEVERE, "doFinishLogin() invalid state parameter");
             return HttpResponses.redirectToContextRoot();
         }
 
