@@ -1,5 +1,10 @@
 # Version History
 
+### Version 0.13 (25 Dec, 2022)
+
+* [SECURITY-2981] Fixed CSRF vulnerability in OAuth flow
+* [SECURITY-2982] Fixed session fixation vulnerability
+
 ### Version 0.12 (19 Dec, 2021)
 
 * Changed README for [the Jenkins documentation system](https://www.jenkins.io/doc/developer/publishing/documentation/)
