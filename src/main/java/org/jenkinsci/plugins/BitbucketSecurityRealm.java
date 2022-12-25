@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpSession;
+
 import org.acegisecurity.Authentication;
 import org.acegisecurity.AuthenticationException;
 import org.acegisecurity.AuthenticationManager;
@@ -147,10 +149,19 @@ public class BitbucketSecurityRealm extends SecurityRealm {
             return HttpResponses.redirectToContextRoot();
         }
 
-        if (state == null || !StringUtils.equals(state, (String) request.getSession().getAttribute(STATE_ATTRIBUTE))) {
+        if (state == null || !StringUtils.equals(state, getSessionAttribute(request, STATE_ATTRIBUTE))) {
             LOGGER.log(Level.SEVERE, "doFinishLogin() invalid state parameter");
             return HttpResponses.redirectToContextRoot();
         }
+
+        String referer = getSessionAttribute(request, REFERER_ATTRIBUTE);
+
+        // avoid session fixation vulnerability
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        request.getSession(true);
 
         String rawClientSecret = getSecretClientSecret().getPlainText();
 
@@ -175,7 +186,6 @@ public class BitbucketSecurityRealm extends SecurityRealm {
         }
 
         // redirect to referer
-        String referer = (String) request.getSession().getAttribute(REFERER_ATTRIBUTE);
         if (referer != null) {
             return HttpResponses.redirectTo(referer);
         } else {
@@ -235,6 +245,14 @@ public class BitbucketSecurityRealm extends SecurityRealm {
     @Override
     public String getLoginUrl() {
         return "securityRealm/commenceLogin";
+    }
+
+    private String getSessionAttribute(StaplerRequest request, String attributeName) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return null;
+        }
+        return (String) session.getAttribute(attributeName);
     }
 
     public static final class ConverterImpl implements Converter {
