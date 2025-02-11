@@ -10,7 +10,7 @@
 
 	<groupId>org.jenkins-ci.plugins</groupId>
 	<artifactId>bitbucket-oauth</artifactId>
-	<version>0.14-SNAPSHOT</version>
+	<version>0.14</version>
 	<name>Bitbucket OAuth Plugin</name>
 	<description>A Jenkins authentication plugin that delegates to Bitbucket OAuth</description>
 	<packaging>hpi</packaging>
@@ -29,7 +29,7 @@
 		<connection>scm:git:git@github.com:jenkinsci/bitbucket-oauth-plugin.git</connection>
 		<developerConnection>scm:git:git@github.com:jenkinsci/bitbucket-oauth-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/bitbucket-oauth-plugin</url>
-		<tag>HEAD</tag>
+		<tag>bitbucket-oauth-0.14</tag>
 	</scm>
 
 	<licenses>
