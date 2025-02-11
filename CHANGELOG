@@ -1,5 +1,11 @@
 # Version History
 
+### Version 0.14 (11 Feb, 2025)
+
+* Minimum Java version is now 11 (related: [PR #9](https://github.com/jenkinsci/bitbucket-oauth-plugin/pull/9))
+* Recommended Jenkins version is now 2.462.3+ (related: [PR #9](https://github.com/jenkinsci/bitbucket-oauth-plugin/pull/9))
+* Updated gson to version 2.8.9
+
 ### Version 0.13 (25 Dec, 2022)
 
 * [SECURITY-2981] Fixed CSRF vulnerability in OAuth flow
