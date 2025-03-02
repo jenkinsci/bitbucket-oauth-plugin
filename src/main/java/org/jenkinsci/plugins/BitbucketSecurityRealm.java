@@ -4,16 +4,15 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpSession;
-
-import org.acegisecurity.Authentication;
-import org.acegisecurity.AuthenticationException;
-import org.acegisecurity.AuthenticationManager;
-import org.acegisecurity.BadCredentialsException;
-import org.acegisecurity.context.SecurityContextHolder;
-import org.acegisecurity.userdetails.UserDetails;
-import org.acegisecurity.userdetails.UserDetailsService;
-import org.acegisecurity.userdetails.UsernameNotFoundException;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.api.BitbucketApiService;
@@ -24,7 +23,7 @@ import org.kohsuke.stapler.Header;
 import org.kohsuke.stapler.HttpRedirect;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 import org.scribe.model.Token;
 import org.springframework.dao.DataAccessException;
 
@@ -45,6 +44,7 @@ import hudson.security.UserMayOrMayNotExistException;
 import hudson.util.Secret;
 import jenkins.model.Jenkins;
 import jenkins.security.SecurityListener;
+import java.util.Collection;
 
 public class BitbucketSecurityRealm extends SecurityRealm {
 
@@ -118,7 +118,7 @@ public class BitbucketSecurityRealm extends SecurityRealm {
         this.secretClientSecret = secretClientSecret;
     }
 
-    public HttpResponse doCommenceLogin(StaplerRequest request, @Header("Referer") final String referer)
+    public HttpResponse doCommenceLogin(StaplerRequest2 request, @Header("Referer") final String referer)
             throws IOException {
 
         String state = RandomStringUtils.random(64, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~");
@@ -140,7 +140,7 @@ public class BitbucketSecurityRealm extends SecurityRealm {
         return new HttpRedirect(bitbucketApiService.createAuthorizationCodeURL(null, state));
     }
 
-    public HttpResponse doFinishLogin(StaplerRequest request) throws IOException {
+    public HttpResponse doFinishLogin(StaplerRequest2 request) throws IOException {
         String code = request.getParameter("code");
         String state = request.getParameter("state");
 
@@ -179,7 +179,7 @@ public class BitbucketSecurityRealm extends SecurityRealm {
 
             BitbucketUser userDetails = auth.getBitbucketUser();
             if (userDetails != null) {
-                SecurityListener.fireAuthenticated(userDetails);
+                SecurityListener.fireAuthenticated2(userDetails);
             }
         } else {
             LOGGER.log(Level.SEVERE, "doFinishLogin() accessToken = null");
@@ -212,7 +212,7 @@ public class BitbucketSecurityRealm extends SecurityRealm {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) {
+    public UserDetails loadUserByUsername2(String username) {
         UserDetails result = null;
         Authentication token = SecurityContextHolder.getContext().getAuthentication();
         if (token == null) {
@@ -247,7 +247,7 @@ public class BitbucketSecurityRealm extends SecurityRealm {
         return "securityRealm/commenceLogin";
     }
 
-    private String getSessionAttribute(StaplerRequest request, String attributeName) {
+    private String getSessionAttribute(StaplerRequest2 request, String attributeName) {
         HttpSession session = request.getSession(false);
         if (session == null) {
             return null;
