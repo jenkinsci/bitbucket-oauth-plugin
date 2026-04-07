@@ -41,13 +41,16 @@ Based on the teams that user has access to, this plugin automatically creates gr
 
 _team::role_
 
-Supported roles are `owner`, `collaborator` and `member`
+Supported roles are:
+* `administrator`
+* `owner` (deprecated / for backward compatibility)
+* `member`
+* `collaborator` (deprecated / for backward compatibility)
 
 Examples
 ```
-team1::owner
-team2::collaborator
-team3::member
+team1::administrator
+team2::member
 ```
 
 These group names can be used in Jenkins *Matrix-based security* to give fine grained access control based on the users team access in Bitbucket.

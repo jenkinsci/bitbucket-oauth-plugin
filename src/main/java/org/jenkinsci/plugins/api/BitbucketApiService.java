@@ -61,9 +61,7 @@ public class BitbucketApiService {
 
         bitbucketUser.addAuthority("authenticated");
 
-        findAndAddUserTeamAccess(accessToken, bitbucketUser, "owner");
-        findAndAddUserTeamAccess(accessToken, bitbucketUser, "collaborator");
-        findAndAddUserTeamAccess(accessToken, bitbucketUser, "member");
+        findAndAddUserWorkspaceAccess(accessToken, bitbucketUser);
 
         return bitbucketUser;
     }
@@ -91,10 +89,9 @@ public class BitbucketApiService {
         return bitbucketUser;
     }
 
-    private void findAndAddUserTeamAccess(Token accessToken, BitbucketUser bitbucketUser, String role) {
-        // require "Team membership Read" permission
+    private void findAndAddUserWorkspaceAccess(Token accessToken, BitbucketUser bitbucketUser) {
         Gson gson = new Gson();
-        String url = API2_ENDPOINT + "workspaces/?role=" + role;
+        String url = API2_ENDPOINT + "user/workspaces";
         try {
             do {
                 OAuthRequest request1 = new OAuthRequest(Verb.GET, url);
@@ -105,12 +102,21 @@ public class BitbucketApiService {
                 LOGGER.finest("Response from bitbucket api " + url);
                 LOGGER.finest(json1);
 
-                BitBucketTeamsResponse bitBucketTeamsResponse = gson.fromJson(json1, BitBucketTeamsResponse.class);
+                BitbucketWorkspaceAccessibleResponse bitBucketTeamsResponse = gson.fromJson(json1, BitbucketWorkspaceAccessibleResponse.class);
 
                 if (CollectionUtils.isNotEmpty(bitBucketTeamsResponse.getTeamsList())) {
-                    for (BitbucketTeams team : bitBucketTeamsResponse.getTeamsList()) {
-                        String authority = team.getUsername() + "::" + role;
-                        bitbucketUser.addAuthority(authority);
+                    for (BitbucketWorkspaceAccessible team : bitBucketTeamsResponse.getTeamsList()) {
+                        String workspaceSlug = team.getWorkspace().getSlug();
+
+                        // Always grant member and collaborator
+                        bitbucketUser.addAuthority(workspaceSlug + "::member");
+                        bitbucketUser.addAuthority(workspaceSlug + "::collaborator"); // for backward compatibility
+
+                        // Grant owner and administrator if the user is an administrator of the workspace
+                        if (team.isAdministrator()) {
+                            bitbucketUser.addAuthority(workspaceSlug + "::administrator");
+                            bitbucketUser.addAuthority(workspaceSlug + "::owner"); // for backward compatibility
+                        }
                     }
                 }
                 url = bitBucketTeamsResponse.getNext();
