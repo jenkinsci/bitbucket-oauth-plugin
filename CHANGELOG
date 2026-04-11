@@ -1,5 +1,11 @@
 # Version History
 
+### Version 0.15 (11 Apr, 2026)
+
+* Migrate to Bitbucket User Workspaces API (EOL 2026-04-14) (related: [PR #14](https://github.com/jenkinsci/bitbucket-oauth-plugin/pull/14))
+* Minimum Java version is now 17 (related: [PR #13](https://github.com/jenkinsci/bitbucket-oauth-plugin/pull/13))
+* Recommended Jenkins version is now 2.479.3+ (related: [PR #13](https://github.com/jenkinsci/bitbucket-oauth-plugin/pull/13))
+
 ### Version 0.14 (11 Feb, 2025)
 
 * Minimum Java version is now 11 (related: [PR #9](https://github.com/jenkinsci/bitbucket-oauth-plugin/pull/9))
