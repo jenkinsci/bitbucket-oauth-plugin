@@ -5,24 +5,24 @@ import java.util.List;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Represents Bitbuckets team api response
+ * Represents Bitbuckets workspaces accessible response
  *
- * https://developer.atlassian.com/bitbucket/api/2/reference/resource/teams
+ * https://developer.atlassian.com/cloud/bitbucket/rest/api-group-workspaces/#api-user-workspaces-get
  */
-public class BitBucketTeamsResponse
+public class BitbucketWorkspaceAccessibleResponse
 {
     @SerializedName("next")
     private String next;
 
     @SerializedName("values")
-    private List<BitbucketTeams> teamsList;
+    private List<BitbucketWorkspaceAccessible> teamsList;
 
-    public List<BitbucketTeams> getTeamsList()
+    public List<BitbucketWorkspaceAccessible> getTeamsList()
     {
         return teamsList;
     }
 
-    public void setTeamsList(List<BitbucketTeams> teamsList)
+    public void setTeamsList(List<BitbucketWorkspaceAccessible> teamsList)
     {
         this.teamsList = teamsList;
     }

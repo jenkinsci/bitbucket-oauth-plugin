@@ -11,43 +11,44 @@ Bitbucket Security Realm (authentication):
 First you need to get consumer key/secret from Bitbucket.
 
 1. Log into your Bitbucket account.
-2. Click on your account avatar in the top right corner and select **Bitbucket Settings**.
-3. If your are a member of an organization, ensure you are on Team settings, not Account settings, from the drop down.
-4. Under ACCESS MANAGEMENT select **OAuth**.
-5. Under OAuth consumers, click **Add consumer**
-6. The system requests the following information:
+2. Open your workspace and click the gear icon on the right top corner, select "Workspace settings" to open workspace settings.
+3. Select **OAuth consumers** under **Apps and features**.
+4. Click **Add consumer**.
+5. The system requests the following information:
    * **Name** is required.
-   * **Callback URL** is required. Input **https://your.jenkins.root/securityRealm/finishLogin** .
+   * **Callback URL** is required. Input **https://your.jenkins.root/securityRealm/finishLogin**.
    * Others are optional.
-7. Under Permissions, select **Account > Read** and **Team membership > Read**(optional).
-8. Click Save.
+6. Select **Account > Read** under **Permissions**.
+7. Click Save.
 The system generates a key and a secret for you.
 Toggle the consumer name to see the generated Key and Secret value for your consumer.
 
 Second, you need to configure your Jenkins.
 
-1. Open Jenkins **Configure System** page.
+1. Open Jenkins **Manage Jenkins** page and open **System** page.
 2. Set correct URL to **Jenkins URL**
 3. Click **Save** button.
-4. Open Jenkins **Configure Global Security** page.
-5. Check **Enable security**.
-6. Select **Bitbucket OAuth Plugin** in **Security Realm**.
-7. Input your Consumer Key to **Client ID**.
-8. Input your Consumer Secret to **Client Secret**.
-9. Click **Save** button.
+4. Open Jenkins **Security** page.
+5. Select **Bitbucket OAuth Plugin** in **Security Realm**.
+6. Input your Consumer Key to **Client ID**.
+7. Input your Consumer Secret to **Client Secret**.
+8. Click **Save** button.
 
 ### Bitbucket Team access Support
 Based on the teams that user has access to, this plugin automatically creates groups of the form
 
 _team::role_
 
-Supported roles are `owner`, `collaborator` and `member`
+Supported roles are:
+* `administrator`
+* `owner` (deprecated / for backward compatibility)
+* `member`
+* `collaborator` (deprecated / for backward compatibility)
 
 Examples
 ```
-team1::owner
-team2::collaborator
-team3::member
+team1::administrator
+team2::member
 ```
 
 These group names can be used in Jenkins *Matrix-based security* to give fine grained access control based on the users team access in Bitbucket.
