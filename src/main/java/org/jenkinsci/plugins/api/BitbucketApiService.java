@@ -35,7 +35,7 @@ public class BitbucketApiService {
         service = builder.build();
     }
 
-public String createAuthorizationCodeURL(Token requestToken, String state) {
+    public String createAuthorizationCodeURL(Token requestToken, String state) {
         return service.getAuthorizationUrl(requestToken) + "&state=" + state;
     }
 
