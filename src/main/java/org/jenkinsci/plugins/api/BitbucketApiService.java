@@ -1,15 +1,8 @@
 package org.jenkinsci.plugins.api;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.logging.Logger;
 
-import org.springframework.security.core.userdetails.UserDetails;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
@@ -20,7 +13,6 @@ import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
 
 import com.google.gson.Gson;
-import java.util.Collection;
 
 public class BitbucketApiService {
 
@@ -43,11 +35,7 @@ public class BitbucketApiService {
         service = builder.build();
     }
 
-    public Token createRquestToken() {
-        return service.getRequestToken();
-    }
-
-    public String createAuthorizationCodeURL(Token requestToken, String state) {
+public String createAuthorizationCodeURL(Token requestToken, String state) {
         return service.getAuthorizationUrl(requestToken) + "&state=" + state;
     }
 
@@ -124,31 +112,6 @@ public class BitbucketApiService {
         } catch (Exception e) {
             // Some error, So ignore it and move on.
             e.printStackTrace();
-        }
-    }
-
-    public UserDetails getUserByUsername(String username) {
-        InputStreamReader reader = null;
-        UserDetails userResponce = null;
-        try {
-            URL url = new URL(API2_ENDPOINT + "users/" + username);
-            reader = new InputStreamReader(url.openStream(), "UTF-8");
-            Gson gson = new Gson();
-            userResponce = gson.fromJson(reader, BitbucketUser.class);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            IOUtils.closeQuietly(reader);
-        }
-
-        if (userResponce != null) {
-            return userResponce;
-        } else {
-            return null;
         }
     }
 
