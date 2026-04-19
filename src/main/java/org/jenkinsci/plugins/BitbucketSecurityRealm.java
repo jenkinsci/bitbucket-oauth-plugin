@@ -11,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
@@ -25,7 +24,6 @@ import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.HttpResponses;
 import org.kohsuke.stapler.StaplerRequest2;
 import org.scribe.model.Token;
-import org.springframework.dao.DataAccessException;
 
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
@@ -45,7 +43,6 @@ import jenkins.model.Jenkins;
 import jenkins.security.LastGrantedAuthoritiesProperty;
 import jenkins.security.SecurityListener;
 import org.springframework.security.core.GrantedAuthority;
-import java.util.Collection;
 
 public class BitbucketSecurityRealm extends SecurityRealm {
 
