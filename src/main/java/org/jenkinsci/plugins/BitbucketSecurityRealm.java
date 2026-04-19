@@ -40,10 +40,11 @@ import hudson.model.Descriptor;
 import hudson.model.User;
 import hudson.security.GroupDetails;
 import hudson.security.SecurityRealm;
-import hudson.security.UserMayOrMayNotExistException;
 import hudson.util.Secret;
 import jenkins.model.Jenkins;
+import jenkins.security.LastGrantedAuthoritiesProperty;
 import jenkins.security.SecurityListener;
+import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 
 public class BitbucketSecurityRealm extends SecurityRealm {
@@ -180,6 +181,7 @@ public class BitbucketSecurityRealm extends SecurityRealm {
             BitbucketUser userDetails = auth.getBitbucketUser();
             if (userDetails != null) {
                 SecurityListener.fireAuthenticated2(userDetails);
+                SecurityListener.fireLoggedIn(userDetails.getUsername());
             }
         } else {
             LOGGER.log(Level.SEVERE, "doFinishLogin() accessToken = null");
@@ -203,29 +205,34 @@ public class BitbucketSecurityRealm extends SecurityRealm {
 
                 throw new BadCredentialsException("Unexpected authentication type: " + authentication);
             }
-        }, new UserDetailsService() {
-            public UserDetails loadUserByUsername(String username)
-                    throws UserMayOrMayNotExistException, DataAccessException {
-                throw new UserMayOrMayNotExistException("Cannot verify users in this context");
-            }
-        });
+        }, username -> loadUserByUsername2(username));
     }
 
     @Override
     public UserDetails loadUserByUsername2(String username) {
-        UserDetails result = null;
         Authentication token = SecurityContextHolder.getContext().getAuthentication();
-        if (token == null) {
-            throw new UsernameNotFoundException("BitbucketAuthenticationToken = null, no known user: " + username);
-        }
-        if (!(token instanceof BitbucketAuthenticationToken)) {
-            throw new UserMayOrMayNotExistException("Unexpected authentication type: " + token);
-        }
-        result = new BitbucketApiService(clientID, getSecretClientSecret().getPlainText()).getUserByUsername(username);
-        if (result == null) {
+        if (token instanceof BitbucketAuthenticationToken) {
+            BitbucketUser user = ((BitbucketAuthenticationToken) token).getBitbucketUser();
+            if (user != null && username.equals(user.getUsername())) {
+                return user;
+            }
             throw new UsernameNotFoundException("User does not exist for login: " + username);
         }
-        return result;
+        // For API token authentication: restore authorities from the last OAuth login.
+        BitbucketUser user = new BitbucketUser();
+        user.username = username;
+        User jenkinsUser = User.getById(username, false);
+        if (jenkinsUser != null) {
+            LastGrantedAuthoritiesProperty prop = jenkinsUser.getProperty(LastGrantedAuthoritiesProperty.class);
+            if (prop != null) {
+                for (GrantedAuthority authority : prop.getAuthorities2()) {
+                    user.addAuthority(authority.getAuthority());
+                }
+                return user;
+            }
+        }
+        user.addAuthority("authenticated");
+        return user;
     }
 
     @Override
