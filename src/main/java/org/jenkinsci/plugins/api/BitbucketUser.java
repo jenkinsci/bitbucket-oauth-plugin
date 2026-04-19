@@ -1,13 +1,13 @@
 package org.jenkinsci.plugins.api;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.apache.commons.lang.StringUtils;
-import java.util.Collection;
 
 public class BitbucketUser implements UserDetails {
 
