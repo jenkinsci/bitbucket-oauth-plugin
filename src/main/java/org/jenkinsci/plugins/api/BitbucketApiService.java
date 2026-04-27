@@ -66,7 +66,7 @@ public class BitbucketApiService {
     private BitbucketUser getBitbucketUserV2(Token accessToken) {
         // require "Account Read" permission
         OAuthRequest request = new OAuthRequest(Verb.GET, API2_ENDPOINT + "user");
-        service.signRequest(accessToken, request);
+        request.addHeader("Authorization", "Bearer " + accessToken.getToken());
         Response response = request.send();
         String json = response.getBody();
         Gson gson = new Gson();
@@ -83,7 +83,7 @@ public class BitbucketApiService {
         try {
             do {
                 OAuthRequest request1 = new OAuthRequest(Verb.GET, url);
-                service.signRequest(accessToken, request1);
+                request1.addHeader("Authorization", "Bearer " + accessToken.getToken());
                 Response response1 = request1.send();
                 String json1 = response1.getBody();
 
