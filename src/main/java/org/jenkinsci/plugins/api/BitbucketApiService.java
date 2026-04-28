@@ -18,7 +18,12 @@ public class BitbucketApiService {
 
     private static final Logger LOGGER = Logger.getLogger(BitbucketApiService.class.getName());
 
-    private static final String API2_ENDPOINT = "https://api.bitbucket.org/2.0/";
+    private String apiEndpoint = "https://api.bitbucket.org/2.0/";
+
+    // package-private for testing
+    void setApiEndpoint(String apiEndpoint) {
+        this.apiEndpoint = apiEndpoint;
+    }
 
     private OAuthService service;
 
@@ -65,7 +70,7 @@ public class BitbucketApiService {
 
     private BitbucketUser getBitbucketUserV2(Token accessToken) {
         // require "Account Read" permission
-        OAuthRequest request = new OAuthRequest(Verb.GET, API2_ENDPOINT + "user");
+        OAuthRequest request = new OAuthRequest(Verb.GET, apiEndpoint + "user");
         request.addHeader("Authorization", "Bearer " + accessToken.getToken());
         Response response = request.send();
         String json = response.getBody();
@@ -79,7 +84,7 @@ public class BitbucketApiService {
 
     private void findAndAddUserWorkspaceAccess(Token accessToken, BitbucketUser bitbucketUser) {
         Gson gson = new Gson();
-        String url = API2_ENDPOINT + "user/workspaces";
+        String url = apiEndpoint + "user/workspaces";
         try {
             do {
                 OAuthRequest request1 = new OAuthRequest(Verb.GET, url);
