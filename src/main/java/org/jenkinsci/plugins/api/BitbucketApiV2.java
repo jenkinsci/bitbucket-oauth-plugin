@@ -65,6 +65,11 @@ public class BitbucketApiV2 extends DefaultApi20 {
             return api.getAccessTokenExtractor().extract(response.getBody());
         }
 
+        @Override
+        public void signRequest(Token accessToken, OAuthRequest request) {
+            request.addHeader("Authorization", "Bearer " + accessToken.getToken());
+        }
+
     }
 
 }
