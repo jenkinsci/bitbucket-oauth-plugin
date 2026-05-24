@@ -185,7 +185,11 @@ public class BitbucketSecurityRealm extends SecurityRealm {
         }
 
         // redirect to referer
-        if (referer != null) {
+        Jenkins jenkins = Jenkins.getInstance();
+        String rootUrl = (jenkins != null) ? jenkins.getRootUrl() : null;
+        boolean isSafeReferer = referer != null
+                && ((rootUrl != null && referer.startsWith(rootUrl)) || Util.isSafeToRedirectTo(referer));
+        if (isSafeReferer) {
             return HttpResponses.redirectTo(referer);
         } else {
             return HttpResponses.redirectToContextRoot();
