@@ -1,5 +1,9 @@
 # Version History
 
+### Version 0.18 (27 May, 2026)
+
+* [SECURITY-3761] Fixed open redirect vulnerability
+
 ### Version 0.17 (28 Apr, 2026)
 
 * Fix OAuth 2.0 access token passed as query parameter, causing HTTP 401 failures during Bitbucket brownout windows (enforcement date: 4 May 2026) (related: [PR #16](https://github.com/jenkinsci/bitbucket-oauth-plugin/pull/16))
