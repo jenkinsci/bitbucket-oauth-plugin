@@ -3,7 +3,7 @@ package org.jenkinsci.plugins.api;
 import java.util.logging.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import hudson.Util;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Response;
@@ -34,7 +34,7 @@ public class BitbucketApiService {
     public BitbucketApiService(String apiKey, String apiSecret, String callback) {
         super();
         ServiceBuilder builder = new ServiceBuilder().provider(BitbucketApiV2.class).apiKey(apiKey).apiSecret(apiSecret);
-        if (StringUtils.isNotBlank(callback)) {
+        if (Util.fixEmptyAndTrim(callback) != null) {
             builder.callback(callback);
         }
         service = builder.build();
@@ -76,7 +76,7 @@ public class BitbucketApiService {
         String json = response.getBody();
         Gson gson = new Gson();
         BitbucketUser bitbucketUser = gson.fromJson(json, BitbucketUser.class);
-        if (bitbucketUser == null || StringUtils.isEmpty(bitbucketUser.username)) {
+        if (bitbucketUser == null || Util.fixEmpty(bitbucketUser.username) == null) {
             return null;
         }
         return bitbucketUser;

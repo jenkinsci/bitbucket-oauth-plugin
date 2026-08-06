@@ -1,11 +1,10 @@
 package org.jenkinsci.plugins;
 
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.api.BitbucketApiService;
 import org.jenkinsci.plugins.api.BitbucketGroup;
 import org.jenkinsci.plugins.api.BitbucketUser;
@@ -47,6 +46,9 @@ import jenkins.security.SecurityListener;
 public class BitbucketSecurityRealm extends SecurityRealm {
 
     private static final String STATE_ATTRIBUTE = BitbucketSecurityRealm.class.getName() + ".state";
+    private static final String STATE_CHARACTERS =
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~";
+    private static final SecureRandom STATE_RANDOM = new SecureRandom();
     private static final String REFERER_ATTRIBUTE = BitbucketSecurityRealm.class.getName() + ".referer";
     private static final Logger LOGGER = Logger.getLogger(BitbucketSecurityRealm.class.getName());
 
@@ -103,7 +105,7 @@ public class BitbucketSecurityRealm extends SecurityRealm {
      */
     public Secret getSecretClientSecret() {
         // for backward compatibility
-        if (StringUtils.isNotEmpty(clientSecret)) {
+        if (Util.fixEmpty(clientSecret) != null) {
             return Secret.fromString(clientSecret);
         }
         return secretClientSecret;
@@ -119,7 +121,7 @@ public class BitbucketSecurityRealm extends SecurityRealm {
     public HttpResponse doCommenceLogin(StaplerRequest2 request, @Header("Referer") final String referer)
             throws IOException {
 
-        String state = RandomStringUtils.random(64, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~");
+        String state = randomState();
         request.getSession().setAttribute(STATE_ATTRIBUTE, state);
         request.getSession().setAttribute(REFERER_ATTRIBUTE, referer);
 
@@ -128,8 +130,8 @@ public class BitbucketSecurityRealm extends SecurityRealm {
             throw new RuntimeException("Jenkins is not started yet.");
         }
         String rootUrl = jenkins.getRootUrl();
-        if (StringUtils.endsWith(rootUrl, "/")) {
-            rootUrl = StringUtils.left(rootUrl, StringUtils.length(rootUrl) - 1);
+        if (rootUrl != null && rootUrl.endsWith("/")) {
+            rootUrl = rootUrl.substring(0, rootUrl.length() - 1);
         }
         String callback = rootUrl + "/securityRealm/finishLogin";
 
@@ -142,12 +144,12 @@ public class BitbucketSecurityRealm extends SecurityRealm {
         String code = request.getParameter("code");
         String state = request.getParameter("state");
 
-        if (StringUtils.isBlank(code)) {
+        if (Util.fixEmptyAndTrim(code) == null) {
             LOGGER.log(Level.SEVERE, "doFinishLogin() code = null");
             return HttpResponses.redirectToContextRoot();
         }
 
-        if (state == null || !StringUtils.equals(state, getSessionAttribute(request, STATE_ATTRIBUTE))) {
+        if (state == null || !state.equals(getSessionAttribute(request, STATE_ATTRIBUTE))) {
             LOGGER.log(Level.SEVERE, "doFinishLogin() invalid state parameter");
             return HttpResponses.redirectToContextRoot();
         }
@@ -253,6 +255,14 @@ public class BitbucketSecurityRealm extends SecurityRealm {
     @Override
     public String getLoginUrl() {
         return "securityRealm/commenceLogin";
+    }
+
+    private static String randomState() {
+        StringBuilder state = new StringBuilder(64);
+        for (int i = 0; i < 64; i++) {
+            state.append(STATE_CHARACTERS.charAt(STATE_RANDOM.nextInt(STATE_CHARACTERS.length())));
+        }
+        return state.toString();
     }
 
     private String getSessionAttribute(StaplerRequest2 request, String attributeName) {

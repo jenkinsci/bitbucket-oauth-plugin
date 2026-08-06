@@ -2,7 +2,6 @@ package org.jenkinsci.plugins;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.plugins.api.BitbucketApiService;
 import org.jenkinsci.plugins.api.BitbucketUser;
 import org.kohsuke.accmod.Restricted;
@@ -46,7 +45,7 @@ public class BitbucketAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getCredentials() {
-        return StringUtils.EMPTY;
+        return "";
     }
 
     @Override
