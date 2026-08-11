@@ -118,6 +118,9 @@ public class BitbucketSecurityRealm extends SecurityRealm {
         this.secretClientSecret = secretClientSecret;
     }
 
+    // Entry point of the login flow: must be reachable by anonymous users, and is only
+    // a GET redirect to the OAuth provider, so no permission check or POST is applicable.
+    @SuppressWarnings({"lgtm[jenkins/no-permission-check]", "lgtm[jenkins/csrf]"})
     public HttpResponse doCommenceLogin(StaplerRequest2 request, @Header("Referer") final String referer)
             throws IOException {
 
@@ -140,6 +143,10 @@ public class BitbucketSecurityRealm extends SecurityRealm {
         return new HttpRedirect(bitbucketApiService.createAuthorizationCodeURL(null, state));
     }
 
+    // OAuth callback: Bitbucket redirects here via GET, so POST cannot be required, and
+    // no permission check applies since the user isn't authenticated yet. CSRF is
+    // mitigated by validating the state parameter against the session below.
+    @SuppressWarnings({"lgtm[jenkins/no-permission-check]", "lgtm[jenkins/csrf]"})
     public HttpResponse doFinishLogin(StaplerRequest2 request) throws IOException {
         String code = request.getParameter("code");
         String state = request.getParameter("state");
