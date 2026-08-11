@@ -3,7 +3,6 @@ package org.jenkinsci.plugins.api;
 import java.util.logging.Logger;
 
 import org.apache.commons.collections.CollectionUtils;
-import hudson.Util;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Response;
@@ -13,6 +12,8 @@ import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
 
 import com.google.gson.Gson;
+
+import hudson.Util;
 
 public class BitbucketApiService {
 
