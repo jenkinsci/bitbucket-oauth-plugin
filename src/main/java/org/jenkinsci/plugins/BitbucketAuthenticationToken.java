@@ -1,5 +1,6 @@
 package org.jenkinsci.plugins;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 public class BitbucketAuthenticationToken extends AbstractAuthenticationToken {
 
+    @Serial
     private static final long serialVersionUID = -7826610577724673531L;
 
     private Token accessToken;

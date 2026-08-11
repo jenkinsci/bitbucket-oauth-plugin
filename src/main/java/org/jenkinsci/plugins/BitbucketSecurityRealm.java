@@ -214,8 +214,8 @@ public class BitbucketSecurityRealm extends SecurityRealm {
     @Override
     public UserDetails loadUserByUsername2(String username) {
         Authentication token = SecurityContextHolder.getContext().getAuthentication();
-        if (token instanceof BitbucketAuthenticationToken) {
-            BitbucketUser user = ((BitbucketAuthenticationToken) token).getBitbucketUser();
+        if (token instanceof BitbucketAuthenticationToken authenticationToken) {
+            BitbucketUser user = authenticationToken.getBitbucketUser();
             if (user != null && username.equals(user.getUsername())) {
                 return user;
             }
