@@ -4,14 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class BitbucketUser implements UserDetails {
 
-    public String username = StringUtils.EMPTY;
+    public String username = "";
 
     List<GrantedAuthority> grantedAuthorties = new ArrayList<GrantedAuthority>();
 
