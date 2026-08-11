@@ -1,5 +1,14 @@
 # Version History
 
+### Version 0.19 (11 Aug, 2026)
+
+* Upgrade plugin parent POM to 6.x and adopt the Jenkins plugins BOM (related: [PR #18](https://github.com/jenkinsci/bitbucket-oauth-plugin/pull/18), [PR #20](https://github.com/jenkinsci/bitbucket-oauth-plugin/pull/20))
+* Minimum Jenkins version is now 2.541.3
+* Migrate tests to JUnit 5 (related: [PR #21](https://github.com/jenkinsci/bitbucket-oauth-plugin/pull/21))
+* Add Java 25 support, including building against JDK 25 in CI (related: [PR #22](https://github.com/jenkinsci/bitbucket-oauth-plugin/pull/22))
+* Replace the direct GSON dependency with the GSON API plugin (related: [PR #19](https://github.com/jenkinsci/bitbucket-oauth-plugin/pull/19))
+* Update scribe from 1.3.3 to 1.3.7 (related: [PR #24](https://github.com/jenkinsci/bitbucket-oauth-plugin/pull/24))
+
 ### Version 0.18 (27 May, 2026)
 
 * [SECURITY-3761] Fixed open redirect vulnerability
