@@ -13,7 +13,7 @@ import java.util.List;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class BitbucketApiServiceTest {
+class BitbucketApiServiceTest {
 
     private WireMockServer wireMock;
     private BitbucketApiService service;
