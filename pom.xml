@@ -93,5 +93,6 @@
 		<jenkins.baseline>2.541</jenkins.baseline>
 		<jenkins.version>${jenkins.baseline}.3</jenkins.version>
 		<ban-commons-lang-2.skip>false</ban-commons-lang-2.skip>
+		<ban-junit4-imports.skip>false</ban-junit4-imports.skip>
 	</properties>
 </project>
