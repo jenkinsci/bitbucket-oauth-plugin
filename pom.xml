@@ -46,10 +46,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-			<version>2.8.9</version>
-			<scope>compile</scope>
+			<groupId>io.jenkins.plugins</groupId>
+			<artifactId>gson-api</artifactId>
+			<version>2.14.0-201.v8eefe5515533</version>
 		</dependency>
 		<dependency>
 			<groupId>org.scribe</groupId>
